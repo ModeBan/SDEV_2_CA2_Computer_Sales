@@ -42,7 +42,7 @@ class ProductUtility:
             print((table_format * cols).format(*row))
 
     @staticmethod
-    def display_low_stock(products_in):
+    def display_low_stock(products_in): # lists low stock
         headings = ["ID", "Name", "Quantity", "Re Order Level"]
         cols = len(headings)
         cell_length = 25
@@ -57,6 +57,50 @@ class ProductUtility:
                 print((table_format).format(row[1]),end="")
                 print((table_format).format(row[4]),end="")
                 print((table_format).format(row[5]),end="\n")
+
+    @staticmethod
+    def reorder_low_stock(products_in):
+        products = products_in
+        products_raised = 0
+        print("{:10}{:20}{:^15}{:^15}{:^15}".format("ID", "Name", "Quantity", "Re Order Level","Ordered"))
+        for row in range(len(products)):
+            if products[row][4] < products[row][5]:
+                ordered = products[row][5] - products[row][4]
+                products[row][4] += ordered
+                print("{:10}{:20}{:^15}{:^15}{:^15}".format(products[row][0], products[row][1], products[row][4], products[row][5], ordered))
+                products_raised += 1
+        if products_raised == 0:
+            print("No products were raised to order", end="\n\n")
+        else:
+            print("Number or products raised to order:",products_raised, end="\n\n")
+
+    @staticmethod
+    def make_sale(products_in, id_in, required_qty_in): # Make sale
+        products = products_in
+        prod_id = id_in
+        required_qty = required_qty_in
+        product_index = -1 # check whether a product exists: -2 initial , -1 not found, index in list
+        number = len(products)
+        if len(products) > 0:
+            for index, product in enumerate(products):
+                if prod_id == product[0]:
+                    product_index = index
+
+            if product_index == -1:
+                print("Product not found!")
+            elif product_index > -1:
+                quantity_available = products[product_index][4]
+                if quantity_available > required_qty:
+                    products[product_index][4] -= required_qty
+                    sale_price = (products[product_index][3] + (products[product_index][3] * (ProductUtility.VAT / 100))) * required_qty
+                    print("Cost of the sale €" + str(round(sale_price,2)))
+                else:
+                    print("Product not enough stock!")
+                    print("Cost of the sale €" + str(0.00))
+
+        else:
+            print("No products added!")
+        print()
 
 
 
@@ -75,7 +119,8 @@ for i in range(len(products)): # conversion of numerical values stored as string
 
 # Menu
 ProductUtility.menu()
-menu_option = int(input("Please enter option:"))
+# menu_option = int(input("Please enter option:"))
+menu_option = 4
 while menu_option > 7 or menu_option < 1:
     print("Invalid input! Enter option from menu")
     menu_option = int(input("Please enter option:"))
@@ -90,9 +135,20 @@ while menu_option != 7:
         ProductUtility.display_low_stock(products)
 
     elif menu_option == 3: # Reorder Low Stock
-        print("Menu Action 3")
+        print("\n*", ("{:^" + str(CELL_LENGTH) + "}").format("Re-Order Low Stock"), "*")
+        ProductUtility.reorder_low_stock(products)
+
     elif menu_option == 4: # Make a Sale
-        print("Menu Action 4")
+        print("\n*", ("{:^" + str(CELL_LENGTH) + "}").format("Make a Sale"), "*")
+        product_to_sell = input("Enter ID of accessory to sell: ")
+        product_qty_to_sell = int(input("Enter the quantity required: "))
+
+        while  product_qty_to_sell < 1: # input validation
+            print("Invalid quantity, must be above 0!")
+            product_qty_to_sell = int(input("Enter the quantity required: "))
+        ProductUtility.make_sale(products,product_to_sell,product_qty_to_sell)
+
+
     elif menu_option == 5: # Add a New Product
         print("Menu Action 5")
     elif menu_option == 6: # Product and Stock on Hand
