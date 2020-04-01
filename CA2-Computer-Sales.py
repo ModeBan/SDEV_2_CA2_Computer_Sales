@@ -102,6 +102,28 @@ class ProductUtility:
             print("No products added!")
         print()
 
+    @staticmethod
+    def add_product(products_list_in ,id_in, name_in, cost_in, selling_in, qty_on_hand_in, re_order_in):
+        new_product = []
+        new_product.append(id_in)
+        new_product.append(name_in)
+        new_product.append(cost_in)
+        new_product.append(selling_in)
+        new_product.append(qty_on_hand_in)
+        new_product.append(re_order_in)
+        products_list_in.append(new_product)
+
+    @staticmethod
+    def create_dictionary(products_in):
+        product_dict = {}
+        for product in products_in:
+            if product[0] not in product_dict:
+                product_dict[product[0]] = product[4]
+        print("{:<15}{:<15}".format("Accessory ID", "Quantity on Hand"))
+        print("_"*31)
+        for key in product_dict:
+            print("{:<15}{:<15}".format(key, product_dict.get(key)))
+        print()
 
 
 # Main body of program
@@ -120,7 +142,7 @@ for i in range(len(products)): # conversion of numerical values stored as string
 # Menu
 ProductUtility.menu()
 # menu_option = int(input("Please enter option:"))
-menu_option = 4
+menu_option = 6
 while menu_option > 7 or menu_option < 1:
     print("Invalid input! Enter option from menu")
     menu_option = int(input("Please enter option:"))
@@ -148,17 +170,31 @@ while menu_option != 7:
             product_qty_to_sell = int(input("Enter the quantity required: "))
         ProductUtility.make_sale(products,product_to_sell,product_qty_to_sell)
 
-
     elif menu_option == 5: # Add a New Product
-        print("Menu Action 5")
-    elif menu_option == 6: # Product and Stock on Hand
-        print("Menu Action 6")
+        print("\n*", ("{:^" + str(CELL_LENGTH) + "}").format("Add New Product"), "*")
 
+        id = input("ID: ")
+        name = input("Name: ")
+        name = name.lower()
+        cost_price = float(input("Cost price: "))
+        selling_price = float(input("Selling price: "))
+        qty_on_hand = int(input("Quantity on hand: "))
+        re_order_level = int(input("Re order Level: "))
+        ProductUtility.add_product(products, id, name, cost_price, selling_price, qty_on_hand, re_order_level)
+        print(name,"added!")
+
+    elif menu_option == 6: # Product and Stock on Hand
+        print("\n*", ("{:^" + str(CELL_LENGTH) + "}").format("Product and Stock on Hand"), "*")
+        ProductUtility.create_dictionary(products)
     ProductUtility.menu()
     menu_option = int(input("Please enter option:"))
     while menu_option > 7 or menu_option < 1:
         print("Invalid input! Enter option from menu")
         menu_option = int(input("Please enter option:"))
 
-if menu_option == 7: # Exit
-    print("Menu action 7")
+if menu_option == 7: # Exit & write to file
+    print("Please wait program writting to file!")
+    with open("stock.csv", "w", newline="") as file:
+        write = csv.writer(file)
+        write.writerows(products)
+    print("Program finished! - stock.csv now available.")
