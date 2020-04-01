@@ -141,8 +141,8 @@ for i in range(len(products)): # conversion of numerical values stored as string
 
 # Menu
 ProductUtility.menu()
-# menu_option = int(input("Please enter option:"))
-menu_option = 6
+menu_option = int(input("Please enter option:"))
+#menu_option = 6
 while menu_option > 7 or menu_option < 1:
     print("Invalid input! Enter option from menu")
     menu_option = int(input("Please enter option:"))
