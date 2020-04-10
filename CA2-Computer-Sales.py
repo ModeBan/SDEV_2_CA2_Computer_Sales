@@ -35,11 +35,15 @@ class ProductUtility:
         cell_length = 25
         table_format = "{:<" +str(cell_length)+"}"
 
-        print("*" * (cell_length * cols))
-        print((table_format * cols).format(*headings))
-        print("*" * (cell_length * cols))
-        for row in products_in:
-            print((table_format * cols).format(*row))
+        if len(products_in) != 0:
+            print("*" * (cell_length * cols))
+            print((table_format * cols).format(*headings))
+            print("*" * (cell_length * cols))
+            for row in products_in:
+                print((table_format * cols).format(*row))
+        else:
+            print("No products found!")
+        print()
 
     @staticmethod
     def display_low_stock(products_in): # lists low stock
@@ -47,6 +51,7 @@ class ProductUtility:
         cols = len(headings)
         cell_length = 25
         table_format = "{:<" +str(cell_length)+"}"
+        products_low_stock = 0
 
         print("*" * (cell_length * cols))
         print((table_format * cols).format(*headings))
@@ -57,6 +62,9 @@ class ProductUtility:
                 print((table_format).format(row[1]),end="")
                 print((table_format).format(row[4]),end="")
                 print((table_format).format(row[5]),end="\n")
+                products_low_stock += 1
+        if products_low_stock == 0:
+            print("No low stock products found!")
 
     @staticmethod
     def reorder_low_stock(products_in):
@@ -112,6 +120,7 @@ class ProductUtility:
         new_product.append(qty_on_hand_in)
         new_product.append(re_order_in)
         products_list_in.append(new_product)
+        print(name_in + " Added!")
 
     @staticmethod
     def create_dictionary(products_in):
@@ -123,6 +132,8 @@ class ProductUtility:
         print("_"*31)
         for key in product_dict:
             print("{:<15}{:<15}".format(key, product_dict.get(key)))
+        if len(products_in) ==0:
+            print("No products found!")
         print()
 
 
@@ -141,11 +152,11 @@ for i in range(len(products)): # conversion of numerical values stored as string
 
 # Menu
 ProductUtility.menu()
-menu_option = int(input("Please enter option:"))
-#menu_option = 6
-while menu_option > 7 or menu_option < 1:
+menu_option = float(input("Please enter option:"))
+
+while menu_option > 7 or menu_option < 1 or not menu_option.is_integer():
     print("Invalid input! Enter option from menu")
-    menu_option = int(input("Please enter option:"))
+    menu_option = float(input("Please enter option:"))
 
 while menu_option != 7:
     if menu_option == 1: # List all stock
@@ -181,16 +192,15 @@ while menu_option != 7:
         qty_on_hand = int(input("Quantity on hand: "))
         re_order_level = int(input("Re order Level: "))
         ProductUtility.add_product(products, id, name, cost_price, selling_price, qty_on_hand, re_order_level)
-        print(name,"added!")
 
     elif menu_option == 6: # Product and Stock on Hand
         print("\n*", ("{:^" + str(CELL_LENGTH) + "}").format("Product and Stock on Hand"), "*")
         ProductUtility.create_dictionary(products)
     ProductUtility.menu()
-    menu_option = int(input("Please enter option:"))
-    while menu_option > 7 or menu_option < 1:
+    menu_option = float(input("Please enter option:"))
+    while menu_option > 7 or menu_option < 1 or not menu_option.is_integer():
         print("Invalid input! Enter option from menu")
-        menu_option = int(input("Please enter option:"))
+        menu_option = float(input("Please enter option:"))
 
 if menu_option == 7: # Exit & write to file
     print("Please wait program writting to file!")
